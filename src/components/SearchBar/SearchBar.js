@@ -6,30 +6,29 @@ class SearchBar extends Component {
     super(props);
 
     this.handleClick = this.handleClick.bind(this);
-    this.handleSong = this.handleSong.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
 
     this.state = {
       searchTerm: '',
     };
   }
 
-  handleSong(e) {
+  handleSearch(e) {
     this.setState({
       searchTerm: e.target.value,
     });
-    // console.log(this.state.song);
   }
 
   handleClick(e) {
-    const { searchSpotify } = this.props;
-    searchSpotify(this.state.searchTerm);
+    const { onSearch } = this.props;
+    onSearch(this.state.searchTerm);
     e.preventDefault();
   }
 
   render() {
     return (
       <div className="SearchBar">
-        <input onChange={this.handleSong} placeholder="Enter A Song Title" />
+        <input onChange={this.handleSearch} placeholder="Enter A Song Title" />
         <a role="button" onClick={this.handleClick}>
           SEARCH
         </a>
