@@ -8,25 +8,9 @@ class Track extends React.Component {
     this.state = {
       isRemoval: props.isRemoval,
     };
+
     this.addTrack = this.addTrack.bind(this);
-    this.removeTrack = this.removeTrack.bind(this);
-  }
-
-  renderAction() {
-    const { isRemoval } = this.state;
-
-    if (isRemoval) {
-      return (
-        <a role="button" className="Track-action" onClick={this.removeTrack}>
-          -
-        </a>
-      );
-    }
-    return (
-      <a role="button" className="Track-action" onClick={this.addTrack}>
-        +
-      </a>
-    );
+    this.handleTrack = this.handleTrack.bind(this);
   }
 
   addTrack() {
@@ -40,21 +24,25 @@ class Track extends React.Component {
         isRemoval: true,
       });
     }
-    onAdd(track);
   }
 
-  removeTrack() {
-    const { track, onRemove } = this.props;
-    onRemove(track);
-    if (this.state.isRemoval) {
-      this.setState({
-        isRemoval: false,
-      });
+  handleTrack() {
+    const { track, onAdd, onRemove, isRemoval } = this.props;
+
+    if (isRemoval) {
+      onRemove('remove', track);
     } else {
-      this.setState({
-        isRemoval: true,
-      });
+      onAdd('add', track);
     }
+  }
+
+  renderAction() {
+    const { isRemoval } = this.state;
+    return (
+      <a role="button" className="Track-action" onClick={this.handleTrack}>
+        {isRemoval ? '-' : '+'}
+      </a>
+    );
   }
 
   render() {
