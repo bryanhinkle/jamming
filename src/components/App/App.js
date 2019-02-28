@@ -22,8 +22,10 @@ class App extends Component {
   }
 
   search(term) {
+    console.log(this);
     Spotify.getAccessToken();
     Spotify.search(term).then(tracks => {
+      console.log(this);
       this.setState({
         searchResults: tracks,
       });
@@ -57,11 +59,13 @@ class App extends Component {
 
   savePlaylist() {
     const { playlistName, playlistTracks } = this.state;
-    Spotify.savePlaylist(playlistName, playlistTracks);
-    this.setState({
-      playlistName: 'New Playlist',
-      playListTracks: []
-    })
+    Spotify.savePlaylist(playlistName, playlistTracks).then(response => {
+      this.setState({
+        playlistName: 'New Playlist',
+        playlistTracks: []
+      })
+    });
+      
   }
 
   render() {

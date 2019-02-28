@@ -20,15 +20,15 @@ const Spotify = {
     if (window.location.href.match(/access_token=([^&]*)/) && window.location.href.match(/expires_in=([^&]*)/)[1]) {
       this.token = window.location.href.match(/access_token=([^&]*)/)[1];
       this.expires = window.location.href.match(/expires_in=([^&]*)/)[1];
-      window.setTimeout(function() { console.log(this.token) }, this.expires * 1000);
-      //window.history.pushState('Access Token', null, '/');
+      window.setTimeout(function() { this.token = '' }, this.expires * 1000);
+      window.history.pushState('Access Token', null, '/');
 
       return this.token;
     } else {
       window.location.href = tokenUrl;
     }
   },
-  search: async function(term) {
+  search(term) {
     return fetch(`${searchUrl}${term}`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
@@ -51,7 +51,7 @@ const Spotify = {
       }
     })
   },
-  savePlaylist: async function(playlistName, playlistTracks) {
+  savePlaylist(playlistName, playlistTracks) {
     const headers = {
       'Authorization': `Bearer ${this.token}`,
       'Content-Type': 'application/json'
@@ -87,10 +87,10 @@ const Spotify = {
         method: 'POST',
         body: JSON.stringify({
           uris: uris
-        })
+        }),
       });
     });
-  }
+  },
 };
 
 export default Spotify;
