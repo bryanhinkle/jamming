@@ -4,7 +4,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import PlayList from '../PlayList/PlayList';
 import SearchResults from '../SearchResults/SearchResults';
 import Spotify from '../../util/Spotify';
-import ls from 'local-storage';
+import Storage from '../../util/Storage';
 
 class App extends Component {
   constructor(props) {
@@ -14,7 +14,6 @@ class App extends Component {
     this.handleTrack = this.handleTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
-    this.setExpire = this.setExpire.bind(this);
 
     this.state = {
       searchResults: [],
@@ -35,25 +34,14 @@ class App extends Component {
     }
     
     this.setState({
-      accessToken: ls.get('accessToken') || data[0],
-      tokenExpire: ls.get('tokenExpire') || this.setExpire(data[1]).toString()
+      accessToken: data[0],
+      tokenExpire: Storage.setExpire(data[1]).toString()
     });
-    ls.set('accessToken', accessToken);
+    //ls.set('accessToken', accessToken);
     console.log(currentTime);
   }
 
-  checkExpire() {
-    const { accessToken, tokenExpire } = this.state;
 
-  }
-
-  setExpire(expires) {
-    const { tokenExpire } = this.state;
-    let time = new Date();
-    const expireTime = Number((time.getHours() + (expires / 3600)).toString() + time.getMinutes().toString() + time.getSeconds().toString());
-    ls.set('tokenExpires', tokenExpire);
-    return expireTime;
-  }
 
   search(term) {
     const { accessToken } = this.state;
