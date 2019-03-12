@@ -9,21 +9,7 @@ class Track extends React.Component {
       isRemoval: props.isRemoval,
     };
 
-    this.addTrack = this.addTrack.bind(this);
     this.handleTrack = this.handleTrack.bind(this);
-  }
-
-  addTrack() {
-    const { track, onAdd } = this.props;
-    if (this.state.isRemoval) {
-      this.setState({
-        isRemoval: false,
-      });
-    } else {
-      this.setState({
-        isRemoval: true,
-      });
-    }
   }
 
   handleTrack() {
@@ -44,12 +30,14 @@ class Track extends React.Component {
       </a>
     );
   }
+  //
 
   render() {
     const { track } = this.props;
     return (
       <div className="Track">
         <div className="Track-information">
+        <audio controls src={track.preview} preload="true" type="audio/mpeg"></audio>
           <h3>{track.name}</h3>
           <p>{`${track.artist} | ${track.album}`}</p>
         </div>

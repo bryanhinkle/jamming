@@ -5,7 +5,7 @@ class SearchBar extends Component {
   constructor(props) {
     super(props);
 
-    this.handleClick = this.handleClick.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
 
     this.state = {
@@ -19,19 +19,28 @@ class SearchBar extends Component {
     });
   }
 
-  handleClick(e) {
+  handleSubmit(e) {
     const { onSearch } = this.props;
-    onSearch(this.state.searchTerm);
     e.preventDefault();
+    onSearch(this.state.searchTerm);
+    document.getElementById('searchText').value = '';
+    // this.refs.searchText.value = '';
   }
 
   render() {
     return (
       <div className="SearchBar">
-        <input onChange={this.handleSearch} placeholder="Enter A Song Title" />
-        <a role="button" onClick={this.handleClick}>
-          SEARCH
-        </a>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            id="searchText"
+            onChange={this.handleSearch}
+            placeholder="Enter A Song Title"
+          />
+          <br />
+          <button type="submit" onClick={this.handleSubmit}>
+            SEARCH
+          </button>
+        </form>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import PlayList from '../PlayList/PlayList';
 import SearchResults from '../SearchResults/SearchResults';
 import Spotify from '../../util/Spotify';
+import ls from 'local-storage';
 
 class App extends Component {
   constructor(props) {
@@ -13,19 +14,52 @@ class App extends Component {
     this.handleTrack = this.handleTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
+    this.setExpire = this.setExpire.bind(this);
 
     this.state = {
       searchResults: [],
       playlistName: 'Awesome Playlist',
       playlistTracks: [],
+      accessToken: '',
+      tokenExpire: '',
     };
+  }
+  componentDidMount() {
+    const { accessToken, tokenExpire } = this.state;
+    const getTime = new Date();
+    const currentTime = Number([getTime.getHours(), getTime.getMinutes(), getTime.getSeconds()].join(''));
+    let data;
+    
+    if(accessToken === '' || currentTime > tokenExpire ) {
+      data = Spotify.getAccessToken();
+    }
+    
+    this.setState({
+      accessToken: ls.get('accessToken') || data[0],
+      tokenExpire: ls.get('tokenExpire') || this.setExpire(data[1]).toString()
+    });
+    ls.set('accessToken', accessToken);
+    console.log(currentTime);
+  }
+
+  checkExpire() {
+    const { accessToken, tokenExpire } = this.state;
+
+  }
+
+  setExpire(expires) {
+    const { tokenExpire } = this.state;
+    let time = new Date();
+    const expireTime = Number((time.getHours() + (expires / 3600)).toString() + time.getMinutes().toString() + time.getSeconds().toString());
+    ls.set('tokenExpires', tokenExpire);
+    return expireTime;
   }
 
   search(term) {
-    console.log(this);
-    Spotify.getAccessToken();
-    Spotify.search(term).then(tracks => {
-      console.log(this);
+    const { accessToken } = this.state;
+    
+    Spotify.search(term, accessToken).then(tracks => {
+      console.log(tracks);
       this.setState({
         searchResults: tracks,
       });
@@ -34,7 +68,6 @@ class App extends Component {
 
   handleTrack(action, track) {
     const { playlistTracks, searchResults } = this.state;
-    let newList;
     if (action === 'add' && playlistTracks.every(listTrack => listTrack.id !== track.id)) {
       playlistTracks.push(track);
       this.setState({
@@ -69,7 +102,10 @@ class App extends Component {
   }
 
   render() {
-    const { searchResults, playlistTracks, playlistName } = this.state;
+    const { searchResults, playlistTracks, playlistName, accessToken, tokenExpire} = this.state;
+    const getTime = new Date();
+    const currentTime = Number([getTime.getHours(), getTime.getMinutes(), getTime.getSeconds()].join(''));
+    console.log(currentTime, tokenExpire);
     return (
       <div className="App">
         <SearchBar onSearch={this.search} />
